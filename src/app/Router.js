@@ -68,11 +68,12 @@ export default () => {
     }
     else if (user) {
       onNavigate(PREVIOUS_LOCATION)
+
     }
   }
 
   if (window.location.pathname === "/" && window.location.hash === "") {
-    new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
+     new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
     document.body.style.backgroundColor="#0E5AE5"
   } else if (window.location.hash !== "") {
     if (window.location.hash === ROUTES_PATH['Bills']) {
@@ -83,6 +84,7 @@ export default () => {
       divIcon2.classList.remove('active-icon')
       const bills = new Bills({ document, onNavigate, firestore, localStorage  })
       bills.getBills().then(data => {
+        console.log("bills reload");
         rootDiv.innerHTML = BillsUI({ data })
         const divIcon1 = document.getElementById('layout-icon1')
         const divIcon2 = document.getElementById('layout-icon2')
