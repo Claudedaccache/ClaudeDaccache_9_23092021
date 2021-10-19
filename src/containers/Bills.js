@@ -1,7 +1,7 @@
 import { ROUTES_PATH } from "../constants/routes.js";
 import { formatDate, formatStatus } from "../app/format.js";
 import Logout from "./Logout.js";
-// import { bills } from "../fixtures/bills.js";
+import { bills } from "../fixtures/bills.js";
 
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
@@ -27,11 +27,25 @@ export default class {
 
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url");
-    // const imgWidth = Math.floor($("#modaleFile").width() * 0.5);          ///removed ///
-    $("#modaleFile").find(".modal-body").html(
-      `<div style='text-align: center;'><img width=100% src=${billUrl} /></div>` ///used 100% instead of ${imgWidth}///
-    );
-    $("#modaleFile").modal("show");
+    console.log(billUrl)
+    let urlArray = billUrl.split('?')
+    urlArray.splice(urlArray.length - 1, 1)
+    let cleanUrlArray = urlArray.join('').split('.')
+    let ext = cleanUrlArray[cleanUrlArray.length - 1]
+    console.log(ext)
+    let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1
+    if (billUrl === "null" || billUrl === "" || (typeof(billUrl) == 'undefined') || !isAuthorizedFile) {
+      $("#modaleFile").find(".modal-body").html(
+        `<h6 style='text-align: center;'>Veuillez saisir un document ayant l'une des extensions suivantes : jpg, jpeg ou png</h6>` ///used 100% instead of ${imgWidth}///
+      );
+      $("#modaleFile").modal("show");
+    } else {
+      // const imgWidth = Math.floor($("#modaleFile").width() * 0.5);          ///removed ///
+      $("#modaleFile").find(".modal-body").html(
+        `<div style='text-align: center;'><img width=100% src="${billUrl}" /></div>` ///used 100% instead of ${imgWidth}///
+      );
+      $("#modaleFile").modal("show");
+    }
   };
 
   // not need to cover this function by tests
@@ -47,16 +61,21 @@ export default class {
           const unsortedBills = snapshot.docs.map((doc) => doc.data());
           let allFilteredBills = unsortedBills.filter(
             (bill) => bill.email === userEmail
-          );
+                      );
+
           let filtredBills = allFilteredBills.filter(
-            (bill) => bill.date !== "" && new Date(bill.date) < Date.now() && new Date(bill.date) > new Date("1900")
+            (bill) =>
+              bill.date !== "" &&
+              new Date(bill.date) < Date.now() &&
+              new Date(bill.date) > new Date("2000")
           );
+          
           const antiChrono = (a, b) => {
-            return new Date(b.date) - new Date(a.date)};
+            return new Date(b.date) - new Date(a.date);
+          };
 
           filtredBills.sort(antiChrono);
           const bills = filtredBills.map((bill) => {
-            console.log(formatDate(bill.date));
             try {
               return {
                 ...bill,

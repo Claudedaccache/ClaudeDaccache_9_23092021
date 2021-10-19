@@ -65,10 +65,10 @@ export default () => {
     if (window.location.pathname === "/" && !user) {
       document.body.style.backgroundColor="#0E5AE5"
       rootDiv.innerHTML = ROUTES({ pathname: window.location.pathname })
-    }
+    } 
     else if (user) {
       onNavigate(PREVIOUS_LOCATION)
-
+      
     }
   }
 
