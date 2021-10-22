@@ -17,12 +17,13 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate });
   }
   handleChangeFile = (e) => {
-    const file = this.document.querySelector(`input[data-testid="file"]`)
+     const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
     const ext = fileName.split(".").pop().toLowerCase(); /// got the extention to verify it///
-    if ($.inArray(ext, ["png", "jpg", "jpeg"]) > -1) {console.log(ext);/// added///
+    if ($.inArray(ext, ["png", "jpg", "jpeg"]) > -1) {
+      console.log(ext); /// added///
       this.firestore.storage
         .ref(`justificatifs/${fileName}`)
         .put(file)
@@ -30,11 +31,14 @@ export default class NewBill {
         .then((url) => {
           this.fileUrl = url;
           this.fileName = fileName;
+          return true;
         });
-    }else{
-      alert("Wrong extension!!")
+    } else {
+      alert("Wrong extension!!");
+      e.preventDefault
+      return false;
     }
-  }
+  };
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -61,9 +65,12 @@ export default class NewBill {
       fileName: this.fileName,
       status: "pending",
     };
-    checkFile(this.fileUrl)
+    console.log(bill.fileUrl);
+    if(bill &&  this.checkFile(bill.fileUrl)){   /// added by me///
     this.createBill(bill);
     this.onNavigate(ROUTES_PATH["Bills"]);
+    }
+   
   };
 
   // not need to cover this function by tests
@@ -78,13 +85,24 @@ export default class NewBill {
         .catch((error) => error);
     }
   };
-}
 
-function checkFile(filePath){
-  if (filePath){
-  handleChangeFile()
-  }else{
-    alert("Veuillez saisir un document ayant l'une des extensions suivantes : jpg, jpeg ou png")
+
+ 
+
+checkFile = (file) => {
+  const filePath = file.split(/\\/g);
+  const fileName = filePath[filePath.length - 1];
+  const ext = fileName.split(".").pop().toLowerCase(); /// got the extention to verify it///
+  let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1
+  if(file === "null" || file === "" || (typeof(file) == 'undefined') || !isAuthorizedFile){
+    alert("Form cannot be submitted, Wrong extension!!");
+   return false;
+  } else {
+    return true;
   }
+};
 
 }
+
+
+
