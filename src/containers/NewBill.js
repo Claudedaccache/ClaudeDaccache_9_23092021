@@ -65,10 +65,13 @@ export default class NewBill {
       fileName: this.fileName,
       status: "pending",
     };
-    console.log(bill.fileUrl);
-    if(bill &&  this.checkFile(bill.fileUrl)){   /// added by me///
+    console.log(bill.fileName);
+    if(bill && bill.fileName !== null){   /// added by me///
     this.createBill(bill);
     this.onNavigate(ROUTES_PATH["Bills"]);
+    }else {
+      alert("Form cannot be submitted, Wrong extension!!");
+      e.preventDefault()
     }
    
   };
@@ -85,22 +88,6 @@ export default class NewBill {
         .catch((error) => error);
     }
   };
-
-
- 
-
-checkFile = (file) => {
-  const filePath = file.split(/\\/g);
-  const fileName = filePath[filePath.length - 1];
-  const ext = fileName.split(".").pop().toLowerCase(); /// got the extention to verify it///
-  let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1
-  if(file === "null" || file === "" || (typeof(file) == 'undefined') || !isAuthorizedFile){
-    alert("Form cannot be submitted, Wrong extension!!");
-   return false;
-  } else {
-    return true;
-  }
-};
 
 }
 

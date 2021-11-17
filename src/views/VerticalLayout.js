@@ -7,6 +7,7 @@ export default (height) => {
     user = JSON.parse(localStorage.getItem('user'))
     if (typeof user === 'string') {
       user = JSON.parse(user)
+      console.log(user);
     }
     if (user && user.type === 'Employee') {
       return (

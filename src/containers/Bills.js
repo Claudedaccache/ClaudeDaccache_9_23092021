@@ -1,7 +1,7 @@
 import { ROUTES_PATH } from "../constants/routes.js";
 import { formatDate, formatStatus } from "../app/format.js";
 import Logout from "./Logout.js";
-import { bills } from "../fixtures/bills.js"; /// useless code///
+import { bills } from "../fixtures/bills.js"; /// useless code?///
 
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
@@ -36,7 +36,7 @@ export default class {
     let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1
     if (billUrl === "null" || billUrl === "" || (typeof(billUrl) == 'undefined') || !isAuthorizedFile) {
        $("#modaleFile").find(".modal-body").html(
-        `<h6 style='text-align: center;'>Veuillez saisir un document ayant l'une des extensions suivantes : jpg, jpeg ou png</h6>` ///used 100% instead of ${imgWidth}///
+        "<h6 style='text-align: center;'>Veuillez saisir un document ayant l'une des extensions suivantes : jpg, jpeg ou png</h6>" ///used 100% instead of ${imgWidth}///
       ); $("#modaleFile").modal("show");
     } else {
       // const imgWidth = Math.floor($("#modaleFile").width() * 0.5);          ///removed ///

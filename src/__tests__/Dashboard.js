@@ -11,9 +11,9 @@ import { bills } from "../fixtures/bills"
 
 describe('Given I am connected as an Admin', () => {
   describe('When I am on Dashboard page, there are bills, and there is one pending', () => {
-    test('Then, filteredBills by pending status should return 1 bill', () => {
+    test('Then, filteredBills by pending status should return 2 bills', () => {
       const filtered_bills = filteredBills(bills, "pending")
-      expect(filtered_bills.length).toBe(1)
+      expect(filtered_bills.length).toBe(2)
     })
   })
   describe('When I am on Dashboard page, there are bills, and there is one accepted', () => {
@@ -204,7 +204,7 @@ describe('Given I am connected as Admin and I am on Dashboard page and I clicked
 })
 
 // test d'intégration GET
-describe("Given I am a user connected as Admin", () => {
+describe("Given I am a user connected as employee", () => {
   describe("When I navigate to Dashboard", () => {
     test("fetches bills from mock API GET", async () => {
        const getSpy = jest.spyOn(firebase, "get")
