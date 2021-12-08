@@ -1,7 +1,6 @@
 import { ROUTES_PATH } from "../constants/routes.js";
 import { formatDate, formatStatus } from "../app/format.js";
 import Logout from "./Logout.js";
-import { bills } from "../fixtures/bills.js"; /// useless code?///
 
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
@@ -27,17 +26,23 @@ export default class {
 
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url");
-    console.log(billUrl)
-    let urlArray = billUrl.split('?')
-    urlArray.splice(urlArray.length - 1, 1)
-    let cleanUrlArray = urlArray.join('').split('.')
-    let ext = cleanUrlArray[cleanUrlArray.length - 1]
-    console.log(ext)
-    let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1
-    if (billUrl === "null" || billUrl === "" || (typeof(billUrl) == 'undefined') || !isAuthorizedFile) {
-       $("#modaleFile").find(".modal-body").html(
+    console.log(billUrl);
+    let urlArray = billUrl.split("?");
+    urlArray.splice(urlArray.length - 1, 1);
+    let cleanUrlArray = urlArray.join("").split(".");
+    let ext = cleanUrlArray[cleanUrlArray.length - 1];
+    console.log(ext);
+    let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1;
+    if (
+      billUrl === "null" ||
+      billUrl === "" ||
+      typeof billUrl == "undefined" ||
+      !isAuthorizedFile
+    ) {
+      $("#modaleFile").find(".modal-body").html(
         "<h6 style='text-align: center;'>Veuillez saisir un document ayant l'une des extensions suivantes : jpg, jpeg ou png</h6>" ///used 100% instead of ${imgWidth}///
-      ); $("#modaleFile").modal("show");
+      );
+      $("#modaleFile").modal("show");
     } else {
       // const imgWidth = Math.floor($("#modaleFile").width() * 0.5);          ///removed ///
       $("#modaleFile").find(".modal-body").html(
@@ -60,7 +65,7 @@ export default class {
           const unsortedBills = snapshot.docs.map((doc) => doc.data());
           let allFilteredBills = unsortedBills.filter(
             (bill) => bill.email === userEmail
-                      );
+          );
 
           let filtredBills = allFilteredBills.filter(
             (bill) =>
@@ -68,7 +73,7 @@ export default class {
               new Date(bill.date) < Date.now() &&
               new Date(bill.date) > new Date("2000")
           );
-          
+
           const antiChrono = (a, b) => {
             return new Date(b.date) - new Date(a.date);
           };
@@ -82,9 +87,6 @@ export default class {
                 status: formatStatus(bill.status),
               };
             } catch (e) {
-              // if for some reason, corrupted data was introduced, we manage here failing formatDate function
-              // log the error and return unformatted date in that case
-              // console.log(e,'for',doc.data())
               return {
                 ...bill,
                 date: bill.date,
@@ -92,7 +94,6 @@ export default class {
               };
             }
           });
-          console.log("length", bills.length);
           return bills;
         })
         .catch((error) => error);

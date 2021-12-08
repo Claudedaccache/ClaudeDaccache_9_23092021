@@ -17,13 +17,14 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate });
   }
   handleChangeFile = (e) => {
-     const file = this.document.querySelector(`input[data-testid="file"]`)
+    const sendBtn = document.getElementById("btn-send-bill");
+    const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
     const ext = fileName.split(".").pop().toLowerCase(); /// got the extention to verify it///
     if ($.inArray(ext, ["png", "jpg", "jpeg"]) > -1) {
-      console.log(ext); /// added///
+      sendBtn.disabled = false;
       this.firestore.storage
         .ref(`justificatifs/${fileName}`)
         .put(file)
@@ -35,17 +36,15 @@ export default class NewBill {
         });
     } else {
       alert("Wrong extension!!");
-      e.preventDefault
+      e.preventDefault;
       return false;
     }
   };
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(
-      'e.target.querySelector(`input[data-testid="datepicker"]`).value',
-      e.target.querySelector(`input[data-testid="datepicker"]`).value
-    );
+    const sendBtn = document.getElementById("btn-send-bill");
+
     const email = JSON.parse(localStorage.getItem("user")).email;
     const bill = {
       email,
@@ -65,15 +64,15 @@ export default class NewBill {
       fileName: this.fileName,
       status: "pending",
     };
-    console.log(bill.fileName);
-    if(bill && bill.fileName !== null){   /// added by me///
-    this.createBill(bill);
-    this.onNavigate(ROUTES_PATH["Bills"]);
-    }else {
+    if (bill && bill.fileName !== null) {
+      /// added by me///
+      sendBtn.disabled = false;
+      this.createBill(bill);
+    } else {
+      sendBtn.disabled = true;
+      e.preventDefault();
       alert("Form cannot be submitted, Wrong extension!!");
-      e.preventDefault()
     }
-   
   };
 
   // not need to cover this function by tests
@@ -88,8 +87,4 @@ export default class NewBill {
         .catch((error) => error);
     }
   };
-
 }
-
-
-

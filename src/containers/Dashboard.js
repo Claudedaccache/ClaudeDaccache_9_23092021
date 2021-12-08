@@ -7,8 +7,9 @@ import Logout from "./Logout.js";
 
 export const filteredBills = (data, status) => {
   return data && data.length
-    ? data.filter((bill) => {   /// added regex///
-        let validDate =   
+    ? data.filter((bill) => {
+        /// added regex///
+        let validDate =
           /(19|20)[0-9][0-9]-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])/g.test(
             bill.date
           ) &&
@@ -26,7 +27,7 @@ export const filteredBills = (data, status) => {
           selectCondition =
             bill.status === status &&
             [...USERS_TEST, userEmail].includes(bill.email) &&
-            validDate;   ///use it here///
+            validDate; ///use it here///
         }
         return selectCondition;
       })
@@ -97,12 +98,10 @@ export default class {
 
   handleClickIconEye = () => {
     const billUrl = $("#icon-eye-d").attr("data-bill-url");
-    console.log(billUrl);
     let urlArray = billUrl.split("?");
     urlArray.splice(urlArray.length - 1, 1);
     let cleanUrlArray = urlArray.join("").split(".");
     let ext = cleanUrlArray[cleanUrlArray.length - 1];
-    console.log(ext);
     let isAuthorizedFile = $.inArray(ext, ["png", "jpg", "jpeg"]) > -1;
     if (
       billUrl === "null" ||
@@ -133,23 +132,13 @@ export default class {
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0;
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id;
     // if (this.counter % 2 === 0 || this.counter % 2 === 1) { /// added another condition///
-      bills.forEach((b) => {
-        $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
-      });
-      $(`#open-bill${bill.id}`).css({ background: "#2A2B35" });
-      $(".dashboard-right-container div").html(DashboardFormUI(bill));
-      $(".vertical-navbar").css({ height: "150vh" });
-      this.counter++;
-    // } 
-    // else {
-    //   $(`#open-bill${bill.id}`).css({ background: "#0D5AE5" });
-
-    //   $(".dashboard-right-container div").html(`
-    //     <div id="big-billed-icon"> ${BigBilledIcon} </div>
-    //   `);
-    //   $(".vertical-navbar").css({ height: "120vh" });
-    //   this.counter++;
-    // }
+    bills.forEach((b) => {
+      $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
+    });
+    $(`#open-bill${bill.id}`).css({ background: "#2A2B35" });
+    $(".dashboard-right-container div").html(DashboardFormUI(bill));
+    $(".vertical-navbar").css({ height: "150vh" });
+    this.counter++;
     $("#icon-eye-d").click(this.handleClickIconEye);
     $("#btn-accept-bill").click((e) => this.handleAcceptSubmit(e, bill));
     $("#btn-refuse-bill").click((e) => this.handleRefuseSubmit(e, bill));
