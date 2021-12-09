@@ -2,6 +2,25 @@ import { ROUTES_PATH } from "../constants/routes.js";
 import { formatDate, formatStatus } from "../app/format.js";
 import Logout from "./Logout.js";
 
+export function sortedBills (bills, userEmail){
+  let allFilteredBills = bills.filter(
+    (bill) => bill.email === userEmail
+  );
+
+  let filtredBills = allFilteredBills.filter(
+    (bill) =>
+      bill.date !== "" &&
+      new Date(bill.date) < Date.now() &&
+      new Date(bill.date) > new Date("2000")
+  );
+
+  const antiChrono = (a, b) => {
+    return new Date(b.date) - new Date(a.date);
+  };
+
+  return filtredBills.sort(antiChrono);
+}
+
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
     this.document = document;
@@ -63,23 +82,7 @@ export default class {
         .get()
         .then((snapshot) => {
           const unsortedBills = snapshot.docs.map((doc) => doc.data());
-          let allFilteredBills = unsortedBills.filter(
-            (bill) => bill.email === userEmail
-          );
-
-          let filtredBills = allFilteredBills.filter(
-            (bill) =>
-              bill.date !== "" &&
-              new Date(bill.date) < Date.now() &&
-              new Date(bill.date) > new Date("2000")
-          );
-
-          const antiChrono = (a, b) => {
-            return new Date(b.date) - new Date(a.date);
-          };
-
-          filtredBills.sort(antiChrono);
-          const bills = filtredBills.map((bill) => {
+          const bills = sortedBills (unsortedBills, userEmail).map((bill) => {
             try {
               return {
                 ...bill,

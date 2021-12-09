@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import BillsUI from "../views/BillsUI.js";
 import { bills } from "../fixtures/bills.js";
-import billClass from "../containers/Bills.js"; ///added  by me///
+import billClass, { sortedBills } from "../containers/Bills.js"; ///added  by me///
 import userEvent from "@testing-library/user-event";
 import { ROUTES, ROUTES_PATH } from "../constants/routes";
 import { localStorageMock } from "../__mocks__/localStorage.js";
@@ -42,6 +42,12 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono);
       expect(dates).toEqual(datesSorted);
     });
+
+    test("Then bills should be ordered by date", () => {
+      const html = BillsUI({ data: bills });
+      document.body.innerHTML = html;
+      expect(sortedBills(bills, "a@a")).toBeTruthy();
+    })
   });
 });
 

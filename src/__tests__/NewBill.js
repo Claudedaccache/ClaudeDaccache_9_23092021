@@ -1,6 +1,6 @@
 import { fireEvent, queryByAttribute, screen } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
-import NewBill from "../containers/NewBill.js";
+import NewBill, { checkFile } from "../containers/NewBill.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import userEvent from "@testing-library/user-event";
 import firebase from "../__mocks__/firebase";
@@ -38,6 +38,19 @@ describe("Given I am connected as an employee", () => {
       fireEvent.click(file);
       expect(NewBillTest).toHaveBeenCalled();
     });
+
+    test("Then, checkFile should be called with right file format", () => {
+      let fileName = "test.jpg"
+      expect(checkFile(fileName)).toBeTruthy()
+    })
+
+    test("Then, checkFile should be called with wrong file format", () => {
+      let fileName = "test.pdf"
+      expect(checkFile(fileName)).toBeFalsy()
+
+    })
+
+
 
     test("Then, inputs should be filled as a template", () => {
       const html = NewBillUI();
@@ -117,46 +130,7 @@ describe("Given I am connected as an employee", () => {
       expect(formSubmit).toHaveBeenCalled();
     });
 
-    test("Then, clicking on the send button should submit the form and create a new bill and send it to the hr admin", () => {
-      const html = NewBillUI();
-      document.body.innerHTML = html;
-
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      });
-      window.localStorage.setItem(
-        "user",
-        JSON.stringify({
-          type: "Employee",
-        })
-      );
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname });
-      };
-
-      const firestore = null;
-      const theNewBill = new NewBill({
-        document,
-        onNavigate,
-        firestore,
-        localStorage: window.localStorage,
-      });
-
-      const file = new File([""], "train.jpg", {
-        type: "image/jpg",
-        lastModified: "2021-11-28",
-      });
-
-      const sendBtn = document.getElementById("btn-send-bill");
-      const form = screen.getByTestId(`form-new-bill`);
-      const formSubmit = jest.fn((file) => theNewBill.handleSubmit(file));
-
-      form.addEventListener("click", formSubmit);
-      userEvent.click(form, file);
-      expect(formSubmit).toHaveBeenCalled();
-      expect(sendBtn.disabled).toBe(false);
-    });
-
+    
     test("Then, New bill title should be displayed", () => {
       const html = NewBillUI();
       document.body.innerHTML = html;

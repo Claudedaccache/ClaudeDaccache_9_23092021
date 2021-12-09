@@ -1,6 +1,17 @@
 import { ROUTES_PATH } from "../constants/routes.js";
 import Logout from "./Logout.js";
 
+export function checkFile(fileName) {
+  const sendBtn = document.getElementById("btn-send-bill");
+  const ext = fileName.split(".").pop().toLowerCase(); /// got the extention to verify it///
+  if ($.inArray(ext, ["png", "jpg", "jpeg"]) > -1) {
+    sendBtn.disabled = false;
+    return true;
+  }
+  sendBtn.disabled = true;
+  return false
+}
+
 export default class NewBill {
   constructor({ document, onNavigate, firestore, localStorage }) {
     this.document = document;
@@ -17,14 +28,11 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate });
   }
   handleChangeFile = (e) => {
-    const sendBtn = document.getElementById("btn-send-bill");
     const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
-    const ext = fileName.split(".").pop().toLowerCase(); /// got the extention to verify it///
-    if ($.inArray(ext, ["png", "jpg", "jpeg"]) > -1) {
-      sendBtn.disabled = false;
+    if (checkFile(fileName)) {
       this.firestore.storage
         .ref(`justificatifs/${fileName}`)
         .put(file)
