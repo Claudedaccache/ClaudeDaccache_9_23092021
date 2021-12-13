@@ -9,7 +9,18 @@ export function checkFile(fileName) {
     return true;
   }
   sendBtn.disabled = true;
-  return false
+  return false;
+}
+
+export function checkDate(bill) {
+  const sendBtn = document.getElementById("btn-send-bill");
+
+  if (bill !== "" && new Date(bill) < Date.now()) {
+    sendBtn.disabled = false;
+    return true;
+  }
+  sendBtn.disabled = true;
+  return false;
 }
 
 export default class NewBill {
@@ -23,6 +34,10 @@ export default class NewBill {
     formNewBill.addEventListener("submit", this.handleSubmit);
     const file = this.document.querySelector(`input[data-testid="file"]`);
     file.addEventListener("change", this.handleChangeFile);
+    const BillDate = this.document.querySelector(
+      `input[data-testid="datepicker"]`
+    );
+    BillDate.addEventListener("change", this.handleBillDate);
     this.fileUrl = null;
     this.fileName = null;
     new Logout({ document, localStorage, onNavigate });
@@ -44,6 +59,18 @@ export default class NewBill {
         });
     } else {
       alert("Wrong extension!!");
+      e.preventDefault;
+      return false;
+    }
+  };
+
+  handleBillDate = (e) => {
+    const billDateValue = e.target.value;
+    console.log(billDateValue);
+    if (checkDate(billDateValue)) {
+      return true;
+    } else {
+      alert("Wrong Date format !!");
       e.preventDefault;
       return false;
     }

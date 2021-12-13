@@ -1,6 +1,6 @@
-import { fireEvent, queryByAttribute, screen } from "@testing-library/dom";
+import { fireEvent, screen } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
-import NewBill, { checkFile } from "../containers/NewBill.js";
+import NewBill, { checkFile, checkDate } from "../containers/NewBill.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import userEvent from "@testing-library/user-event";
 import firebase from "../__mocks__/firebase";
@@ -31,28 +31,25 @@ describe("Given I am connected as an employee", () => {
         firestore,
         localStorage: window.localStorage,
       });
-      const file = screen.getByTestId(`file`);
+      const sendButton = screen.getByTestId(`btn-send`);
 
       const NewBillTest = jest.fn((e) => theNewBill.handleChangeFile(e));
-      file.addEventListener("click", NewBillTest);
-      fireEvent.click(file);
+      sendButton.addEventListener("click", NewBillTest);
+      fireEvent.click(sendButton);
       expect(NewBillTest).toHaveBeenCalled();
     });
 
     test("Then, checkFile should be called with right file format", () => {
-      let fileName = "test.jpg"
-      expect(checkFile(fileName)).toBeTruthy()
-    })
+      let fileName = "test.jpg";
+      expect(checkFile(fileName)).toBeTruthy();
+    });
 
     test("Then, checkFile should be called with wrong file format", () => {
-      let fileName = "test.pdf"
-      expect(checkFile(fileName)).toBeFalsy()
+      let fileName = "test.pdf";
+      expect(checkFile(fileName)).toBeFalsy();
+    });
 
-    })
-
-
-
-    test("Then, inputs should be filled as a template", () => {
+    test("Then, handleBillDate should be called", () => {
       const html = NewBillUI();
       document.body.innerHTML = html;
 
@@ -76,27 +73,22 @@ describe("Given I am connected as an employee", () => {
         firestore,
         localStorage: window.localStorage,
       });
-      const file = screen.getByTestId(`file`);
-      const expenseType = screen.getByTestId(`expense-type`);
-      const expenseName = screen.getByTestId(`expense-name`);
-      const expenseDate = screen.getByTestId(`datepicker`);
-      const expenseAmount = screen.getByTestId(`amount`);
-      const expenseVat = screen.getByTestId(`vat`);
-      const expensePct = screen.getByTestId(`pct`);
-      const expenseCommentary = screen.getByTestId(`commentary`);
+      const sendButton = screen.getByTestId(`btn-send`);
 
-      const NewBillTest = jest.fn(theNewBill.handleChangeFile);
-      file.addEventListener("click", NewBillTest);
-      fireEvent.click(file);
+      const NewBillTest = jest.fn((e) => theNewBill.handleBillDate(e));
+      sendButton.addEventListener("click", NewBillTest);
+      fireEvent.click(sendButton);
       expect(NewBillTest).toHaveBeenCalled();
-      expect(file.length).not.toEqual(0);
-      expect((expenseType.value = "Transports")).toBe("Transports");
-      expect(expenseName.value).toBe("");
-      expect(expenseDate.value).toBe("");
-      expect(expenseAmount.value).toBe("");
-      expect(expenseVat.value).toBe("");
-      expect(expensePct.value).toBe("");
-      expect(expenseCommentary.value).toBe("");
+    });
+
+    test("Then, billDate should be called with right file format (date is < than current date)", () => {
+      let billDate = "2021-12-06";
+      expect(checkDate(billDate)).toBeTruthy();
+    });
+
+    test("Then, billDate should be called with wrong file format (date is > than current date)", () => {
+      let billDate = "2022-11-06";
+      expect(checkDate(billDate)).toBeFalsy();
     });
 
     test("Then, clicking on the send button should submit the form", () => {
@@ -130,7 +122,6 @@ describe("Given I am connected as an employee", () => {
       expect(formSubmit).toHaveBeenCalled();
     });
 
-    
     test("Then, New bill title should be displayed", () => {
       const html = NewBillUI();
       document.body.innerHTML = html;
